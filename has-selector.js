@@ -1,4 +1,4 @@
-// Polyfill for :has selector.  It's replaces each :has declaration with a class alias,
+// Polyfill for :has selector.  It replaces each :has declaration with a class alias,
 // then uses JS to conditionally add/remove the class to/from DOM elements.
 (function () {
     "use strict";
