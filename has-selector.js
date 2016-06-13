@@ -8,16 +8,15 @@
     var inner = [];         // Each entry is a CSS selector corresponding to the inner element
     var alias = [];         // Each entry is a unique class name
 
-    // We want to listen for events, then add/remove the aliases.
-    addEventListener("mouseenter", applyAliases);
-    addEventListener("mousedown", applyAliases);
-    addEventListener("mouseout", applyAliases);
-    addEventListener("focusin", applyAliases);
-    addEventListener("change", applyAliases);
-    addEventListener("click", applyAliases);
-    addEventListener("input", applyAliases);
-    addEventListener("blur", applyAliases);
-    addEventListener("load", applyAliases);
+    addEventListener("mouseenter", toggleAliases);
+    addEventListener("mousedown", toggleAliases);
+    addEventListener("mouseout", toggleAliases);
+    addEventListener("focusin", toggleAliases);
+    addEventListener("change", toggleAliases);
+    addEventListener("click", toggleAliases);
+    addEventListener("input", toggleAliases);
+    addEventListener("blur", toggleAliases);
+    addEventListener("load", toggleAliases);
     loadStylesheets();
 
     // This function loads each <link> element's stylesheet so that we can parse it.
@@ -43,11 +42,12 @@
         var s = document.createElement("style"); // <style> element to replace the <link> element
         var r = /[)(}{@;,]|:has\b/g;             // RegExp to find important symbols within the CSS
         var t = xhr.responseText;                // the CSS text loaded via AJAX
-        var inHasCls = 0;                        // indicates whether we're in a :has declaration
+        var inHasDec = 0;                        // indicates whether we're in a :has declaration
         var inAtSlct = 0;                        // indicates whether we're in an at-rule selector
         var inAtBlck = 0;                        // indicates whether we're in an at-rule block
         var inParens = 0;                        // indicates whether we're within parentheses
         var inStyles = 0;                        // indicates whether we're within a style block
+        var foundAny;                            // indicates whether any :has declarations were found
         var i = 0;                               // index at which the current selector begins
         var h = 0;                               // index at which the :has declaration begins
         var f;                                   // the results of RegExp search
@@ -59,8 +59,8 @@
 
         case ")":
             if (inParens) inParens--;
-            if (!inHasCls || inParens) break;
-            inHasCls--;
+            if (!inHasDec || inParens) break;
+            inHasDec--;
             addAlias();
             break;
 
@@ -91,7 +91,7 @@
 
         case ":has":
             h = f.index;
-            inHasCls++;
+            inHasDec++;
         }
 
         // This function creates a unique alias, replaces the :has declaration with it,
@@ -106,19 +106,22 @@
             basis += 1;
             alias.push(c);
             r.lastIndex = h;
+            foundAny = true;
             outer.push(t.slice(i, h));
             inner.push(t.slice(h + L, f.index));
             t = t.slice(0, h) + "." + c + t.slice(f.index + 1);
         }
 
-        s.appendChild(document.createTextNode(t));
-        link.parentNode.replaceChild(s, link);
+        if (foundAny) {
+            s.appendChild(document.createTextNode(t));
+            link.parentNode.replaceChild(s, link);
+        }
     }
 
     // This function adds/removes classes to/from DOM elements depending on whether they
     // meet the criteria of the :has selector.
     // Without it, we're unable to mimic the behavior of the :has selector.
-    function applyAliases() {
+    function toggleAliases() {
         var i, n, t, e;
 
         for (i = 0; i < alias.length; i++) {
