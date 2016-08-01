@@ -10,7 +10,6 @@
 
     parseInlineStylesheets();
     loadExternalStylesheets();
-    addEventListener("load", toggleAliases);
     addEventListener("blur", toggleAliases);
     addEventListener("input", toggleAliases);
     addEventListener("click", toggleAliases);
@@ -18,7 +17,7 @@
     addEventListener("focusin", toggleAliases);
     addEventListener("mouseout", toggleAliases);
     addEventListener("mousedown", toggleAliases);
-    addEventListener("mouseenter", toggleAliases);
+    addEventListener("DOMContentLoaded", toggleAliases);
 
     // This function loads each <link> element's stylesheet so that we can parse it.
     // Without it, we'd have no way of finding the :has selectors within <link> elements.
@@ -30,9 +29,14 @@
 
         for (i = 0; i < n.length; i++) {
             x = new XMLHttpRequest();
-            x.addEventListener("load", addAliases.bind(null, x, n[i]));
-            x.open("GET", n[i].getAttribute("href"), true);
+            x.addEventListener("load", handleLoad.bind(null, x, n[i]));
+            x.open("GET", n[i].getAttribute("href"), false);
             x.send();
+        }
+
+        function handleLoad(xhr, oldElem) {
+            addAliases(xhr, oldElem);
+            toggleAliases();
         }
     }
 
@@ -51,7 +55,7 @@
     // This function finds the :has selectors, and replaces each one with a class alias.
     // It also replaces each <link> element with a <style> element containing the aliases.
     // Without it, we're unable to insert the aliases into the CSS in the appropriate position.
-    function addAliases(xhr, oldStyle) {
+    function addAliases(xhr, oldElem) {
         var newStyle = document.createElement("style"); // <style> element to replace the <link> element
         var r = /[)(}{@;:>+~, ]|\bhas\b/g;              // RegExp to find important symbols within the CSS
         var styleTxt = xhr.responseText;                // the CSS text loaded via AJAX
@@ -140,7 +144,7 @@
 
         if (xhr.responseText !== styleTxt) {
             newStyle.appendChild(document.createTextNode(styleTxt));
-            oldStyle.parentNode.replaceChild(newStyle, oldStyle);
+            oldElem.parentNode.replaceChild(newStyle, oldElem);
         }
     }
 
