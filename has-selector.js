@@ -29,15 +29,12 @@
 
         for (i = 0; i < n.length; i++) {
             x = new XMLHttpRequest();
-            x.addEventListener("load", handleLoad.bind(null, x, n[i]));
+            x.addEventListener("load", addAliases.bind(null, x, n[i]));
             x.open("GET", n[i].getAttribute("href"), false);
             x.send();
         }
 
-        function handleLoad(xhr, oldElem) {
-            addAliases(xhr, oldElem);
-            toggleAliases();
-        }
+        toggleAliases();
     }
 
     // This function parses each <style> element's stylesheet.
