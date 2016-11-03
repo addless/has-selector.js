@@ -98,6 +98,7 @@
         case "}":
             if (inAtBlck) inAtBlck--;
             if (inStyles) inStyles--;
+            if (inPseudo) inPseudo--;
             outerBgn = f.index + 1;
             break;
 
