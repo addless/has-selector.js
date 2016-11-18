@@ -19,6 +19,27 @@
     addEventListener("mousedown", toggleAliases);
     addEventListener("DOMContentLoaded", toggleAliases);
 
+    new MutationObserver(queueRender).observe(document.documentElement, {
+        characterData: true,
+        attributes: true,
+        childList: true,
+        subtree: true
+    });
+
+    // This function de-bounces calls to the rendering function
+    // Without it, there's the possibility for unnecessary back-to-back renders
+    function queueRender() {
+        if (queueRender.$queued === true) return;
+        queueRender.$frame = requestAnimationFrame(doRender);
+        cancelAnimationFrame(queueRender.$frame);
+        queueRender.$queued = true;
+
+        function doRender() {
+            renderAliases();
+            queueRender.$queued = false;
+        }
+    }
+
     // This function loads each <link> element's stylesheet so that we can parse it.
     // Without it, we'd have no way of finding the :has selectors within <link> elements.
     function loadExternalStylesheets() {
@@ -156,7 +177,7 @@
             e = document.querySelectorAll(outer[i]);
 
             for (n = 0; n < e.length; n++) {
-                t = !!e[n].querySelector(inner[i]);
+                t = !!e[n].querySelector(outer[i] + ' ' + inner[i]);
                 e[n].classList.toggle(alias[i], t);
             }
         }
