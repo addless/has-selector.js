@@ -3,7 +3,6 @@
 (function () {
     "use strict";
 
-    var holder = document.createElement('_'); // Holder wherein off-DOM HTML comparisons take place
     var unique = Date.now();                  // Base number used to create unique ids for each alias
     var outer = [];                           // Each entry is a CSS selector corresponding to the outer element
     var inner = [];                           // Each entry is a CSS selector corresponding to the inner element
@@ -178,9 +177,10 @@
             e = document.querySelectorAll(outer[i]);
 
             for (n = 0; n < e.length; n++) {
-                holder.innerHTML = e[n].innerHTML;
-                t = !!holder.querySelector('_ ' + inner[i]);
+                e[n].setAttribute('_', '');
+                t = !!e[n].querySelector('[_] ' + inner[i]);
                 e[n].classList.toggle(alias[i], t);
+                e[n].removeAttribute('_');
             }
         }
     }
