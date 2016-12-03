@@ -1,0 +1,22 @@
+{
+  "name": "has-selector-js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/has-selector.js",
+  "scripts": {
+    "test": "./node_modules/.bin/karma start"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "driven-js": "git://github.com/addless/driven.js",
+    "jasmine-ajax": "^3.2.0",
+    "jasmine-core": "^2.5.0",
+    "karma": "^1.2.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-growl-notifications-reporter": "0.0.2",
+    "karma-jasmine": "^1.0.2",
+    "karma-opera-launcher": "^1.0.0",
+    "karma-safari-launcher": "^1.0.0"
+  }
+}

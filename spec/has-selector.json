@@ -1,0 +1,74 @@
+{
+    "should parse <style> elements": {
+        "setup HTML": [
+            "<style> div:has(i) { display:inline-block; } </style> <div><i/></div>"
+        ],
+        "check elements": [
+            "div", "display", "inline-block"
+        ]
+    },
+    "should parse <link> elements": {
+        "setup HTML": [
+            "<link rel='stylesheet' href='base/spec/has-selector.css'/> <div><i/></div>"
+        ],
+        "check elements": [
+            "div", "display", "inline-block"
+        ]
+    },
+    "should ignore non-matching checkbox": {
+        "setup HTML": [
+            "<style> div:has(:checked) { display:inline-block } </style> <div><input type='checkbox'/></div>"
+        ],
+        "check elements": [
+            "div", "display", "block"
+        ]
+    },
+    "should respond to attribute changes": {
+        "invoke element methods": [
+            "input", "setAttribute", ["checked", ""]
+        ],
+        "check elements": [
+            "div", "display", "inline-block"
+        ]
+    },
+    "should respond to 'change' events": {
+        "invoke element methods": [
+            "input", "click", []
+        ],
+        "check elements": [
+            "div", "display", "block"
+        ]
+    },
+    "should not respond to property changes": {
+        "set element properties": [
+            "input", "checked", true
+        ],
+        "check elements": [
+            "div", "display", "block"
+        ]
+    },
+    "should ignore non-matching :has(:not(…)) declarations": {
+        "setup HTML": [
+            "<style> div:has(:not(:empty)) { display:inline-block } </style> <div><p></p></div>"
+        ],
+        "check elements": [
+            "div", "display", "block"
+        ]
+    },
+    "should respond to textContent updates": {
+        "set element properties": [
+            "p", "textContent", "foo"
+        ],
+        "check elements": [
+            "div", "display", "inline-block"
+        ]
+    },
+    "should respond to innerHTML updates": {
+        "set element properties": [
+            "p", "innerHTML", ""
+        ],
+        "check elements": [
+            "div", "display", "block"
+        ]
+    }
+}

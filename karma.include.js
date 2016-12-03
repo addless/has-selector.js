@@ -1,0 +1,1 @@
+document.write('<div id="jasmine_fixture"></div>');
