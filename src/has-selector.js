@@ -3,10 +3,10 @@
 (function () {
     'use strict';
 
-    var unique = Date.now();        // Base number used to create unique ids for each alias
-    var watcher = Watcher();        // Watches and responds to DOM mutations
-    var out2in = {__proto__: null}; // Maps parent selectors to :has selectors
     var out2id = {__proto__: null}; // Maps parent selectors to unique ids
+    var out2in = {__proto__: null}; // Maps parent selectors to :has selectors
+    var watcher = Watcher();        // Watches and responds to DOM mutations
+    var unique = Date.now();        // Base number used to create unique ids for each alias
 
     updateAllNodes();
     addEventListener('blur', updateParentNodes, true);      // :focus
