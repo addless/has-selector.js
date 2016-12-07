@@ -70,5 +70,14 @@
         "check elements": [
             "div", "display", "block"
         ]
+    },
+    "should match :has() declarations following other pseudo selectors": {
+        "setup HTML": [
+            "<style> input:valid,div:has(p) { display:inline-block } </style> <input><div><p></p></div>"
+        ],
+        "check elements": [
+            "input", "display", "inline-block",
+            "div", "display", "inline-block"
+        ]
     }
 }
