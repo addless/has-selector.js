@@ -99,6 +99,7 @@
             break;
 
         case ';':
+            if (inPseudo) inPseudo--;
             if (inAtSlct) inAtSlct--;
             outerBgn = f.index + 1;
             break;
@@ -107,17 +108,18 @@
             if (!inAtSlct) inStyles++;
             if (inAtSlct) inAtBlck++;
             if (inAtSlct) inAtSlct--;
+            if (inPseudo) inPseudo--;
             break;
 
         case '}':
             if (inAtBlck) inAtBlck--;
             if (inStyles) inStyles--;
-            if (inPseudo) inPseudo--;
             outerBgn = f.index + 1;
             break;
 
         case ',':
             if (!inStyles && !inAtSlct && !inAtBlck) outerBgn = f.index + 1;
+            if (inPseudo) inPseudo--;
             break;
 
         case '+':
@@ -135,6 +137,7 @@
         case 'has':
             if (inPseudo) inHasDec = inPrnths + 1;
             if (inPseudo) innerBgn = f.index - 1;
+            if (inPseudo) inPseudo--;
         }
 
         oldElem._hasSelectorApplied = true;
