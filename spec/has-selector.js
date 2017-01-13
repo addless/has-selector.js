@@ -3,29 +3,27 @@ describe('has-selector.js', function () {
 
     var root = document.querySelector('#jasmine_fixture');
 
-    forEachTest('base/spec/has-selector.json', function (done) {
+    forEachTest('base/spec/has-selector.json', function () {
 
-        runStep('setup HTML', function (html) {
+        runAsyncStep('setup HTML', function (html) {
+            requestAnimationFrame(endAsyncStep);
             root.innerHTML = html;
         });
 
-        runStep('invoke element methods', function (selector, key, args) {
+        runAsyncStep('invoke element methods', function (selector, key, args) {
             var element = root.querySelector(selector);
             element[key].apply(element, args);
+            requestAnimationFrame(endAsyncStep);
         });
 
-        runStep('set element properties', function (selector, key, val) {
+        runAsyncStep('set element properties', function (selector, key, val) {
             root.querySelector(selector)[key] = val;
+            requestAnimationFrame(endAsyncStep);
         });
 
-        requestAnimationFrame(function () {
-
-            runStep('check elements', function (selector, key, val) {
-                var style = getComputedStyle(root.querySelector(selector));
-                expect(style[key]).toEqual(val);
-            });
-
-            done();
+        runStep('check elements', function (selector, key, val) {
+            var style = getComputedStyle(root.querySelector(selector));
+            expect(style[key]).toEqual(val);
         });
     });
 });
