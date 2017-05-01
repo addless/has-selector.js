@@ -207,7 +207,7 @@
             updateParentNodes(event);
         }
 
-        n = document.querySelectorAll('input[type=radio][name=' + a + ']');
+        n = document.querySelectorAll('input[type=radio][name="' + a + '"]');
         for (i = -1; n[++i];) updateParentNodes({target: n[i], timeStamp: t});
     }
 
