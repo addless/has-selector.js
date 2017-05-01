@@ -9,14 +9,14 @@
     var unique = Date.now();        // Base number used to create unique ids for each alias
 
     updateAllNodes();
-    addEventListener('blur', updateParentNodes, true);      // :focus
-    addEventListener('focus', updateParentNodes, true);     // :focus
-    addEventListener('input', updateParentNodes, true);     // :valid
-    addEventListener('change', updateParentNodes, true);    // :checked
-    addEventListener('mouseup', updateParentNodes, true);   // :active
-    addEventListener('mousedown', updateParentNodes, true); // :active
-    addEventListener('mouseout', updateParentNodes, true);  // :hover
-    addEventListener('mouseover', updateParentNodes, true); // :hover
+    addEventListener('blur', updateParentNodes, true);          // :focus
+    addEventListener('focus', updateParentNodes, true);         // :focus
+    addEventListener('input', updateParentNodes, true);         // :valid
+    addEventListener('mouseup', updateParentNodes, true);       // :active
+    addEventListener('mousedown', updateParentNodes, true);     // :active
+    addEventListener('mouseout', updateParentNodes, true);      // :hover
+    addEventListener('mouseover', updateParentNodes, true);     // :hover
+    addEventListener('change', updateRelatedParentNodes, true); // :checked
 
     // Watches and responds to DOM mutations.
     // Without it, we're unable to mimic the behavior of the :has selector in response to DOM changes.
@@ -168,6 +168,7 @@
     function updateParentNodes(event) {
         var i, s;
         var o = event.target;
+        var t = event.timeStamp;
         var f = Element.prototype.matches
             || Element.prototype.matchesSelector
             || Element.prototype.oMatchesSelector
@@ -176,14 +177,38 @@
             || Element.prototype.webkitMatchesSelector;
 
         watcher.off();
-        while (o = o.parentElement) {
-            for (s in out2in) {
-                if (!f.call(o, s)) continue;
-                for (i = -1; out2id[s][++i];) updateNode(o, out2in[s][i], out2id[s][i]);
-            }
+        while (o = o.parentElement) for (s in out2in) switch (true) {
+        case o._hasSelectorTimeStamp === t:
+        case !f.call(o, s):
+            continue;
+
+        default:
+            o._hasSelectorTimeStamp = t;
+            for (i = -1; out2id[s][++i];) updateNode(o, out2in[s][i], out2id[s][i]);
         }
 
         watcher.on();
+    }
+
+    // This function evaluates only the parents of grouped radio buttons to determine if any match a :has selector declaration.
+    // Without it, we're unable to mimic the behavior of the :has selector in response to radio button group changes.
+    function updateRelatedParentNodes(event) {
+        var n;
+        var i;
+        var o = event.target;
+        var t = event.timeStamp;
+        var y = o.getAttribute('type');
+        var a = o.getAttribute('name');
+
+        switch (true) {
+        case a === '':
+        case y !== 'radio':
+        case !(o instanceof HTMLInputElement):
+            updateParentNodes(event);
+        }
+
+        n = document.querySelectorAll('input[type=radio][name=' + a + ']');
+        for (i = -1; n[++i];) updateParentNodes({target: n[i], timeStamp: t});
     }
 
     // This function evaluates all elements to determine if any match a :has selector declaration.
