@@ -79,5 +79,32 @@
             "input", "display", "inline-block",
             "div", "display", "inline-block"
         ]
+    },
+    "should ignore non-matching radio buttons": {
+        "setup HTML": [
+            "<style> div:has(:checked) { display:inline-block } </style> <div><input type=radio name=x></div><div><input type=radio name=x></div>"
+        ],
+        "check elements": [
+            "div:nth-child(2)", "display", "block",
+            "div:nth-child(3)", "display", "block"
+        ]
+    },
+    "should respond to radio button changes": {
+        "invoke element methods": [
+            "div:nth-child(2) > input", "click", []
+        ],
+        "check elements": [
+            "div:nth-child(2)", "display", "inline-block",
+            "div:nth-child(3)", "display", "block"
+        ]
+    },
+    "should respond to radio button group changes": {
+        "invoke element methods": [
+            "div:nth-child(3) > input", "click", []
+        ],
+        "check elements": [
+            "div:nth-child(2)", "display", "block",
+            "div:nth-child(3)", "display", "inline-block"
+        ]
     }
 }
